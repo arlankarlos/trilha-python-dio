@@ -204,14 +204,25 @@ def listar_clientes(usuarios):
     for usuario in usuarios:
         print(f"CPF: {usuario['CPF']}         Cliente: {usuario['Nome']}")
 
-def nova_conta_corrente(contas_correntes):
-    nova_conta_corrente = {}
-    nova_conta_corrente["Agência"] = '0001'
-    nova_conta_corrente['Número da conta'] = len(contas_correntes)+1
+def nova_conta_corrente(contas_correntes, usuarios):
+
     nome = input('Nome do(a) cliente: ')
-    nova_conta_corrente['Usuário'] = int(input("CPF do cliente: "))
-    print(f'Conta número: {nova_conta_corrente['Número da conta']} criada para o(a) cliente {nome}.')
-    return contas_correntes.append(nova_conta_corrente)
+    CPF = int(input("CPF: "))
+    existente = True
+    for usuario in usuarios:
+        if usuario['CPF'] == CPF:
+            existente = False
+    if existente:
+        print("Primeiro cadastre o cliente, cliente inexistente.")
+    else:
+        nova_conta_corrente = {}
+        nova_conta_corrente["Agência"] = '0001'
+        nova_conta_corrente['Número da conta'] = len(contas_correntes)+1
+        nova_conta_corrente['Usuário'] = CPF
+        print(f'Conta criada com sucesso!!!\nConta número: {nova_conta_corrente['Número da conta']} criada para o(a) cliente {nome.upper()}.')
+        contas_correntes.append(nova_conta_corrente)
+        
+    return contas_correntes
 
 def listar_contas_correntes(contas_correntes):
     for conta in contas_correntes:
@@ -265,7 +276,7 @@ while True:
         listar_clientes(usuarios)
     # Nova Conta Corrente
     elif opcao == "cc":
-        nova_conta_corrente(contas_correntes)
+        nova_conta_corrente(contas_correntes,usuarios)
     elif opcao == "lc":
         listar_contas_correntes(contas_correntes)
     # Opção inválida
