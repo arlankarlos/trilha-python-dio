@@ -203,6 +203,7 @@ def criar_usuario(usuarios):
 def listar_clientes(usuarios):
     for usuario in usuarios:
         print(f"CPF: {usuario['CPF']}         Cliente: {usuario['Nome']}")
+        print("==========================================")
 
 def nova_conta_corrente(contas_correntes, usuarios):
 
@@ -227,6 +228,7 @@ def nova_conta_corrente(contas_correntes, usuarios):
 def listar_contas_correntes(contas_correntes):
     for conta in contas_correntes:
         print(conta)
+        print("==========================================")
 while True:
 
     opcao = input(menu)
