@@ -35,6 +35,17 @@ def calcula_juros(emprestimo_desejado, parcela):
   juros = round(juros, 2)
   return juros
 
+def opcao_deposito():
+    global extrato
+    global saldo
+    valor = float(input("Informe o valor do depósito: "))
+
+    if valor > 0:
+        saldo += valor
+        extrato += f"Depósito: R$ {valor:.2f}\n"
+
+    else:
+        print("Operação falhou! O valor informado é inválido.")
 
 while True:
 
@@ -42,6 +53,8 @@ while True:
     limite_credito = (calcula_limite_credito(coeficiente_credito, limite_credito, saldo))-credito_pessoal
 #Deposito
     if opcao == "d":
+        opcao_deposito()
+        """        
         valor = float(input("Informe o valor do depósito: "))
 
         if valor > 0:
@@ -50,6 +63,7 @@ while True:
 
         else:
             print("Operação falhou! O valor informado é inválido.")
+        """
 
 # Saque
     elif opcao == "s":
