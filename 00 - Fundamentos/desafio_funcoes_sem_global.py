@@ -42,7 +42,7 @@ def calcula_juros(emprestimo_desejado, parcela):
   juros = round(juros, 2)
   return juros
 
-def opcao_deposito(saldo, extrato, valor):
+def opcao_deposito(saldo, extrato, valor, /):
     #global extrato
     #global saldo
     valor = float(input("Informe o valor do depósito: "))
@@ -50,36 +50,38 @@ def opcao_deposito(saldo, extrato, valor):
     if valor > 0:
         saldo += valor
         extrato += f"Depósito: R$ {valor:.2f}\n"
-        return saldo, extrato
+        
 
     else:
         print("Operação falhou! O valor informado é inválido.")
+    return saldo, extrato
 
-def opcao_saque(saldo=saldo, extrato=extrato, numero_saques=numero_saques, limite=limite, LIMITE_SAQUES=LIMITE_SAQUES):
+def opcao_saque(*, saldo, valor, extrato, numero_saques, limite, limite_saques):
     #global saldo, extrato, numero_saques, limite, LIMITE_SAQUES
-    valor = float(input("Informe o valor do saque: "))
+    
 
-    excedeu_saldo = valor > saldo
     excedeu_limite = valor > limite
-    excedeu_saques = numero_saques >= LIMITE_SAQUES
+    excedeu_saldo = valor > saldo
+    excedeu_saques = numero_saques >= limite_saques
 
     if excedeu_saldo:
-        return print("Operação falhou! Você não tem saldo suficiente.")
+        print("Operação falhou! Você não tem saldo suficiente.")
 
     elif excedeu_limite:
-        return print("Operação falhou! O valor do saque excede o limite.")
+        print("Operação falhou! O valor do saque excede o limite.")
 
     elif excedeu_saques:
-        return print("Operação falhou! Número máximo de saques excedido.")
+        print("Operação falhou! Número máximo de saques excedido.")
 
     elif valor > 0:
         saldo -= valor
         extrato += f"Saque: R$ {valor:.2f}\n"
         numero_saques += 1
-        return saldo, extrato, numero_saques
 
     else:
-        return print("Operação falhou! O valor informado é inválido.")
+        print("Operação falhou! O valor informado é inválido.")
+    
+    return saldo, extrato, numero_saques
 
 def opcao_pix():
     global saldo, PIX_MINIMO, extrato
@@ -164,7 +166,7 @@ def opcao_quitar_parcela():
     else:
         print("Operação cancelada.")
 
-def opcao_extrato(saldo, extrato=extrato):
+def opcao_extrato(saldo, /,*, extrato):
     global limite_credito
     global credito_pessoal
     print("\n================ EXTRATO ================")
@@ -196,24 +198,37 @@ def criar_usuario(usuarios):
         novo_usuario["Endereço"] = input("Logradouro: ") + ', ' + input("Número: ") + ', ' + input("Bairro: ") + ', ' + input("Cidade: ") + "/" + input("UF: ")
         usuarios.append(novo_usuario)
         print('Novo cliente adicionado com sucesso')
-        return usuarios
+    return usuarios
 
 def listar_clientes(usuarios):
     for usuario in usuarios:
         print(f"CPF: {usuario['CPF']}         Cliente: {usuario['Nome']}")
+        print("==========================================")
 
-def nova_conta_corrente(contas_correntes):
-    nova_conta_corrente = {}
-    nova_conta_corrente["Agência"] = '0001'
-    nova_conta_corrente['Número da conta'] = len(contas_correntes)+1
+def nova_conta_corrente(contas_correntes, usuarios):
+
     nome = input('Nome do(a) cliente: ')
-    nova_conta_corrente['Usuário'] = int(input("CPF do cliente: "))
-    print(f'Conta número: {nova_conta_corrente['Número da conta']} criada para o(a) cliente {nome}.')
-    return contas_correntes.append(nova_conta_corrente)
+    CPF = int(input("CPF: "))
+    existente = True
+    for usuario in usuarios:
+        if usuario['CPF'] == CPF:
+            existente = False
+    if existente:
+        print("Primeiro cadastre o cliente, cliente inexistente.")
+    else:
+        nova_conta_corrente = {}
+        nova_conta_corrente["Agência"] = '0001'
+        nova_conta_corrente['Número da conta'] = len(contas_correntes)+1
+        nova_conta_corrente['Usuário'] = CPF
+        print(f'Conta criada com sucesso!!!\nConta número: {nova_conta_corrente['Número da conta']} criada para o(a) cliente {nome.upper()}.')
+        contas_correntes.append(nova_conta_corrente)
+        
+    return contas_correntes
 
 def listar_contas_correntes(contas_correntes):
     for conta in contas_correntes:
         print(conta)
+        print("==========================================")
 while True:
 
     opcao = input(menu)
@@ -224,8 +239,10 @@ while True:
 
     # Saque
     elif opcao == "s":
+        valor = float(input("Informe o valor do saque: "))
         if numero_saques < LIMITE_SAQUES:
-            saldo, extrato, numero_saques = opcao_saque(saldo, extrato, numero_saques, limite, LIMITE_SAQUES)
+
+            saldo, extrato, numero_saques = opcao_saque(saldo=saldo, valor=valor, extrato=extrato, numero_saques=numero_saques, limite=limite, limite_saques=LIMITE_SAQUES)
 
     # Inclusão opção PIX e beneficiário
     elif opcao == "p":
@@ -248,7 +265,7 @@ while True:
 
     # Extrato            
     elif opcao == "e":
-        opcao_extrato(saldo, extrato)
+        opcao_extrato(saldo, extrato=extrato)
 
     # Sair
     elif opcao == "v":
@@ -261,7 +278,7 @@ while True:
         listar_clientes(usuarios)
     # Nova Conta Corrente
     elif opcao == "cc":
-        nova_conta_corrente(contas_correntes)
+        nova_conta_corrente(contas_correntes,usuarios)
     elif opcao == "lc":
         listar_contas_correntes(contas_correntes)
     # Opção inválida
