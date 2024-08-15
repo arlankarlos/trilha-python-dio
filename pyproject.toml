@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "api-x"
+version = "0.1.0"
+description = "Aula Python no curso DIO."
+authors = ["arlankarlos <lolozo@msn.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+tweepy = "^4.14.0"
+pymongo = "^4.8.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
